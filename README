@@ -1,190 +1,191 @@
 # Spring Boot CRUD API
 
-A Spring Boot REST API demonstrating CRUD operations for employees using a custom DAO implementation with JPA EntityManager.
+A Spring Boot REST API demonstrating CRUD operations for employees using Spring Data JPA and `JpaRepository`.
 
 ## Overview
 
 This project is part of my Spring Boot learning journey.
 
-The project demonstrates how to build a RESTful CRUD API using a layered architecture and JPA EntityManager for database operations.
+The project initially used a custom DAO implementation with JPA `EntityManager` to perform database operations. It was later refactored to use Spring Data JPA and `JpaRepository`, reducing the amount of boilerplate code required for database access.
 
-## Architecture
+The API supports full CRUD operations as well as partial updates using HTTP PATCH.
 
-The application follows a layered architecture:
+## Project Evolution
 
-```text
-REST Controller
-      ↓
-Service Layer
-      ↓
-DAO Interface
-      ↓
-DAO Implementation
-      ↓
-JPA EntityManager
-      ↓
-MySQL Database
-```
+### Version 1 - Custom DAO
+
+The project initially used a custom DAO layer with JPA `EntityManager`.
+
+    REST Controller
+          ↓
+    Service Layer
+          ↓
+    DAO Interface
+          ↓
+    DAO Implementation
+          ↓
+    JPA EntityManager
+          ↓
+    MySQL Database
+
+### Version 2 - Spring Data JPA
+
+The custom DAO interface and implementation were replaced with a Spring Data JPA repository.
+
+    REST Controller
+          ↓
+    Service Layer
+          ↓
+    EmployeeRepository
+          ↓
+    JpaRepository
+          ↓
+    MySQL Database
+
+This refactoring simplified the data access layer by using the built-in CRUD operations provided by `JpaRepository`.
 
 ## Features
 
-* Get all employees
-* Get an employee by ID
-* Create a new employee
-* Update an employee
-* Delete an employee
-* Partial update using HTTP PATCH
-* JSON request and response handling
-* JPA EntityManager
-* Custom DAO pattern
-* Service layer
-* REST Controller
+- Get all employees
+- Get an employee by ID
+- Create a new employee
+- Update an employee
+- Delete an employee
+- Partial update using HTTP PATCH
+- JSON request and response handling
+- Spring Data JPA
+- `JpaRepository`
+- Service layer
+- REST Controller
+- MySQL database integration
 
 ## Technologies
 
-* Java
-* Spring Boot
-* Spring Web
-* Spring Data JPA / Jakarta Persistence
-* JPA EntityManager
-* MySQL
-* Maven
-* IntelliJ IDEA
+- Java
+- Spring Boot
+- Spring Web
+- Spring Data JPA
+- Jakarta Persistence
+- Hibernate
+- MySQL
+- Maven
+- IntelliJ IDEA
 
 ## REST Endpoints
 
 ### Get All Employees
 
-```http
-GET /api/employees
-```
+    GET /api/employees
 
 Returns a list of all employees.
 
 ### Get Employee by ID
 
-```http
-GET /api/employees/{employeeId}
-```
+    GET /api/employees/{employeeId}
 
 Returns an employee using the provided ID.
 
 Example:
 
-```http
-GET /api/employees/1
-```
+    GET /api/employees/1
 
 ### Create Employee
 
-```http
-POST /api/employees
-```
+    POST /api/employees
 
 Example request body:
 
-```json
-{
-    "firstName": "Ahmed",
-    "lastName": "Sabra",
-    "email": "ahmed@example.com"
-}
-```
+    {
+        "firstName": "Ahmed",
+        "lastName": "Sabra",
+        "email": "ahmed@example.com"
+    }
 
 ### Update Employee
 
-```http
-PUT /api/employees
-```
+    PUT /api/employees
 
 Example request body:
 
-```json
-{
-    "id": 1,
-    "firstName": "Ahmed",
-    "lastName": "Sabra",
-    "email": "new@email.com"
-}
-```
+    {
+        "id": 1,
+        "firstName": "Ahmed",
+        "lastName": "Sabra",
+        "email": "new@email.com"
+    }
 
 ### Delete Employee
 
-```http
-DELETE /api/employees/{employeeId}
-```
+    DELETE /api/employees/{employeeId}
 
 Example:
 
-```http
-DELETE /api/employees/1
-```
+    DELETE /api/employees/1
 
 ### Partial Update
 
-```http
-PATCH /api/employees/{employeeId}
-```
+    PATCH /api/employees/{employeeId}
 
 Allows updating specific fields without sending the complete Employee object.
 
 Example:
 
-```json
-{
-    "email": "updated@email.com"
-}
-```
+    {
+        "email": "updated@email.com"
+    }
 
 ## Project Structure
 
-```text
-src/main/java/com/sabra/springboot/cruddemo
-│
-├── rest
-│   └── EmployeeRestController
-│
-├── service
-│   ├── EmployeeService
-│   └── EmployeeServiceImpl
-│
-├── dao
-│   ├── EmployeeDAO
-│   └── EmployeeDAOJpaImpl
-│
-└── entity
-    └── Employee
-```
+    src/main/java/com/sabra/springboot/cruddemo
+    │
+    ├── rest
+    │   └── EmployeeRestController
+    │
+    ├── service
+    │   ├── EmployeeService
+    │   └── EmployeeServiceImpl
+    │
+    ├── repository
+    │   └── EmployeeRepository
+    │
+    └── entity
+        └── Employee
 
 ## What I Learned
 
 Through this project, I practiced:
 
-* Building REST APIs with Spring Boot
-* Understanding HTTP methods such as GET, POST, PUT, PATCH, and DELETE
-* Using `@RestController`
-* Using `@RequestMapping`
-* Using `@GetMapping`, `@PostMapping`, `@PutMapping`, `@PatchMapping`, and `@DeleteMapping`
-* Using `@PathVariable`
-* Using `@RequestBody`
-* Converting JSON requests into Java objects
-* Returning Java objects as JSON responses
-* Creating POJO/Entity classes
-* Using JPA EntityManager
-* Creating a custom DAO layer
-* Applying the Service Layer pattern
-* Implementing CRUD database operations
-* Implementing partial updates using Jackson `JsonMapper`
+- Building REST APIs with Spring Boot
+- Understanding HTTP methods such as GET, POST, PUT, PATCH, and DELETE
+- Using `@RestController`
+- Using `@RequestMapping`
+- Using `@GetMapping`, `@PostMapping`, `@PutMapping`, `@PatchMapping`, and `@DeleteMapping`
+- Using `@PathVariable`
+- Using `@RequestBody`
+- Converting JSON requests into Java objects
+- Returning Java objects as JSON responses
+- Creating POJO/Entity classes
+- Using JPA `EntityManager`
+- Creating a custom DAO layer
+- Applying the Service Layer pattern
+- Using Spring Data JPA
+- Extending `JpaRepository`
+- Using built-in repository methods such as `findAll()`, `findById()`, `save()`, and `deleteById()`
+- Refactoring a custom DAO implementation to Spring Data JPA
+- Implementing CRUD database operations
+- Implementing partial updates using Jackson `JsonMapper`
 
 ## Future Improvements
 
-The project will be improved gradually as I continue learning Spring Boot.
+The project will continue to evolve as I learn more about Spring Boot.
 
 Planned improvements include:
 
-* Replacing the custom DAO implementation with Spring Data JPA `JpaRepository`
-* Improving exception handling
-* Adding global exception handling using `@ControllerAdvice`
-* Adding validation
-* Adding Spring Security and authentication/authorization
-* Improving API responses and HTTP status handling
+- Exposing repositories using Spring Data REST
+- Improving exception handling
+- Adding global exception handling using `@ControllerAdvice`
+- Adding Bean Validation
+- Improving HTTP status code handling
+- Improving API error responses
+- Adding Spring Security
+- Implementing authentication and authorization
