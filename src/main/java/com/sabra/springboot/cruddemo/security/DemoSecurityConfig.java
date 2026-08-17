@@ -5,37 +5,20 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.provisioning.JdbcUserDetailsManager;
+import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
-import java.net.http.HttpRequest;
+import javax.sql.DataSource;
 
 @Configuration
 public class DemoSecurityConfig {
 
+
+
     @Bean
-    public InMemoryUserDetailsManager userDetailsManager(){
-        UserDetails ahmed = User.builder()
-                .username("Ahmed")
-                .password("{noop}ahmed123")
-                .roles("EMPLOYEE")
-                .build();
-
-        UserDetails nabil = User.builder()
-                .username("Nabil")
-                .password("{noop}nabil123")
-                .roles("EMPLOYEE","MANAGER")
-                .build();
-
-        UserDetails sabra = User.builder()
-                .username("Sabra")
-                .password("{noop}sabra123")
-                .roles("EMPLOYEE","MANAGER","ADMIN")
-                .build();
-
-        return new InMemoryUserDetailsManager(ahmed,nabil,sabra);
+    public UserDetailsManager userDetailsManager(DataSource dataSource){
+        return new JdbcUserDetailsManager(dataSource);
     }
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws  Exception {
@@ -54,5 +37,6 @@ public class DemoSecurityConfig {
         http.csrf(csrf -> csrf.disable());
 
         return http.build();
+
     }
 }

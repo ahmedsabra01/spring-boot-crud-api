@@ -1,6 +1,6 @@
 # Spring Boot CRUD API
 
-A Spring Boot REST API demonstrating CRUD operations for employees using Spring Data JPA and `JpaRepository`.
+A Spring Boot REST API demonstrating CRUD operations for employees using Spring Data JPA, `JpaRepository`, and Spring Security with JDBC authentication.
 
 ## Overview
 
@@ -9,6 +9,8 @@ This project is part of my Spring Boot learning journey.
 The project initially used a custom DAO implementation with JPA `EntityManager` to perform database operations. It was later refactored to use Spring Data JPA and `JpaRepository`, reducing the amount of boilerplate code required for database access.
 
 The API supports full CRUD operations as well as partial updates using HTTP PATCH.
+
+The project was then extended with Spring Security to implement authentication and role-based authorization. Authentication was initially implemented using in-memory users and was later refactored to use JDBC-based authentication with a MySQL database.
 
 ## Project Evolution
 
@@ -44,6 +46,24 @@ The custom DAO interface and implementation were replaced with a Spring Data JPA
 
 This refactoring simplified the data access layer by using the built-in CRUD operations provided by `JpaRepository`.
 
+### Version 3 - Spring Security
+
+Spring Security was added to protect the REST API using HTTP Basic Authentication and role-based authorization.
+
+The project initially used in-memory users for authentication and was later changed to JDBC authentication.
+
+    HTTP Request
+          ↓
+    Spring Security
+          ↓
+    JDBC Authentication
+          ↓
+    MySQL Database
+          ↓
+    users / authorities
+
+Different roles have different permissions for the employee endpoints.
+
 ## Features
 
 - Get all employees
@@ -58,12 +78,19 @@ This refactoring simplified the data access layer by using the built-in CRUD ope
 - Service layer
 - REST Controller
 - MySQL database integration
+- Spring Security
+- HTTP Basic Authentication
+- JDBC-based authentication
+- Role-based authorization
+- Different permissions based on user roles
+- CSRF disabled for the stateless REST API
 
 ## Technologies
 
 - Java
 - Spring Boot
 - Spring Web
+- Spring Security
 - Spring Data JPA
 - Jakarta Persistence
 - Hibernate
@@ -77,11 +104,15 @@ This refactoring simplified the data access layer by using the built-in CRUD ope
 
     GET /api/employees
 
+Requires the `EMPLOYEE` role.
+
 Returns a list of all employees.
 
 ### Get Employee by ID
 
     GET /api/employees/{employeeId}
+
+Requires the `EMPLOYEE` role.
 
 Returns an employee using the provided ID.
 
@@ -92,6 +123,8 @@ Example:
 ### Create Employee
 
     POST /api/employees
+
+Requires the `MANAGER` role.
 
 Example request body:
 
@@ -104,6 +137,8 @@ Example request body:
 ### Update Employee
 
     PUT /api/employees
+
+Requires the `MANAGER` role.
 
 Example request body:
 
@@ -118,6 +153,8 @@ Example request body:
 
     DELETE /api/employees/{employeeId}
 
+Requires the `ADMIN` role.
+
 Example:
 
     DELETE /api/employees/1
@@ -126,6 +163,8 @@ Example:
 
     PATCH /api/employees/{employeeId}
 
+Requires the `MANAGER` role.
+
 Allows updating specific fields without sending the complete Employee object.
 
 Example:
@@ -133,6 +172,33 @@ Example:
     {
         "email": "updated@email.com"
     }
+
+## Security
+
+The application uses Spring Security to protect the REST API.
+
+### Authentication
+
+The application uses HTTP Basic Authentication.
+
+User authentication is handled using JDBC and stored in the MySQL database.
+
+Spring Security retrieves users and their authorities through `JdbcUserDetailsManager`.
+
+### Authorization
+
+Access to endpoints is controlled using roles.
+
+| HTTP Method | Endpoint | Required Role |
+|-------------|----------|---------------|
+| GET | `/api/employees` | EMPLOYEE |
+| GET | `/api/employees/{employeeId}` | EMPLOYEE |
+| POST | `/api/employees` | MANAGER |
+| PUT | `/api/employees` | MANAGER |
+| PATCH | `/api/employees/{employeeId}` | MANAGER |
+| DELETE | `/api/employees/{employeeId}` | ADMIN |
+
+The application uses `hasRole()` to restrict access based on the authenticated user's role.
 
 ## Project Structure
 
@@ -147,6 +213,9 @@ Example:
     │
     ├── repository
     │   └── EmployeeRepository
+    │
+    ├── security
+    │   └── DemoSecurityConfig
     │
     └── entity
         └── Employee
@@ -174,10 +243,18 @@ Through this project, I practiced:
 - Refactoring a custom DAO implementation to Spring Data JPA
 - Implementing CRUD database operations
 - Implementing partial updates using Jackson `JsonMapper`
+- Configuring Spring Security
+- Implementing HTTP Basic Authentication
+- Implementing JDBC-based authentication
+- Understanding users and authorities in Spring Security
+- Implementing role-based authorization
+- Configuring endpoint access based on HTTP methods and roles
+- Understanding the difference between authentication and authorization
+- Configuring CSRF for a REST API
 
 ## Future Improvements
 
-The project will continue to evolve as I learn more about Spring Boot.
+The project will continue to evolve as I learn more about Spring Boot and Spring Security.
 
 Planned improvements include:
 
@@ -187,5 +264,6 @@ Planned improvements include:
 - Adding Bean Validation
 - Improving HTTP status code handling
 - Improving API error responses
-- Adding Spring Security
-- Implementing authentication and authorization
+- Improving authentication and authorization
+- Implementing password encoding
+- Exploring JWT-based authentication
